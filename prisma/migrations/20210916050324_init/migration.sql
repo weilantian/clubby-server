@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Schedule" ADD COLUMN     "date" TEXT NOT NULL DEFAULT E'',
+ADD COLUMN     "endTime" TEXT NOT NULL DEFAULT E'';

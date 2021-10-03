@@ -1,0 +1,154 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Sex {
+  MALE
+  FEMALE
+  OTHER
+  UNSET
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model ClubInfo {
+  id                  String @id @default("default")
+  name                String
+  description         String
+  type                String
+  designedMemberCount Int
+}
+
+model User {
+  id               String             @id @default(uuid())
+  email            String             @unique
+  name             String
+  password         String
+  sex              Sex                @default(UNSET)
+  role             Role
+  roleName         String             @default("")
+  joinRequest      JoinRequest[]
+  participated     Schedule[]
+  tasks            Task[]
+  inquiryQuestions Inquiry[]          @relation("questions")
+  InquiryAnswers   Inquiry[]          @relation("answers")
+  atended          AttendanceRecord[]
+  relatedTasks     Task[]             @relation("doneBy")
+  activated Boolean @default(false)
+}
+
+model AttendanceRecord {
+  id         String    @id @default(uuid())
+  date       DateTime  @default(now())
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+  scheduleId String?
+  course     Course?   @relation(fields: [courseId], references: [id])
+  courseId   String?
+  attended   User[]
+}
+
+enum ScheduleType {
+  COURSE
+  ACTIVITY
+  TRIP
+  OTHER
+}
+
+model Schedule {
+  id                String             @id @default(uuid())
+  name              String
+  date String @default("")
+  startTime         String        @default("")
+  endTime String @default("")
+  type              ScheduleType       @default(COURSE)
+  custom_type       String?
+  description       String             @default("")
+  participator      User[]
+  fileLinks         String             @default("")
+  course            Course?            @relation(fields: [courseId], references: [id])
+  courseId          String?
+  published         Boolean            @default(false)
+  attendanceRecords AttendanceRecord[]
+}
+
+model Course {
+  id                String             @id @default(uuid())
+  name              String
+  fileLinks         String             @default("")
+  content           String
+  scheduled         Schedule?
+  published         Boolean            @default(false)
+  attendanceRecords AttendanceRecord[]
+}
+
+enum QuestionType {
+  CHOOSE
+  SHORT_TEXT
+  LONG_TEXT
+}
+
+model QuestionnaireQuestion {
+  id             String              @id @default(uuid())
+  type           QuestionType
+  answers        JoinRequestAnswer[]
+  choose_options String[]
+  question       String
+}
+
+enum Status {
+  APPROVED
+  WAIT
+  REJECTED
+}
+
+model JoinRequest {
+  id       String @id @default(uuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  wechatQQ String @default("")
+  phoneNum String @default("")
+  email    String @default("")
+  status   Status @default(WAIT)
+}
+
+model JoinRequestAnswer {
+  id         String                 @id @default(uuid())
+  questionId String?
+  question   QuestionnaireQuestion? @relation(fields: [questionId], references: [id])
+  answer     String
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  content     String
+  due         String
+  finished    Boolean
+  personal    Boolean  @default(true)
+  belongsTo   User     @relation(fields: [publisherId], references: [id])
+  publisherId String
+  doneBy      User[]   @relation("doneBy")
+}
+
+model Inquiry {
+  id           String   @id @default(uuid())
+  publishedBy  User     @relation("questions", fields: [publisherId], references: [id])
+  publisherId  String
+  answeredBy   User?    @relation("answers", fields: [answerUserId], references: [id])
+  answerUserId String?
+  title        String   @default("")
+  content      String   @default("")
+  answer       String   @default("")
+  public       Boolean
+  publishedOn  DateTime @default(now())
+}
