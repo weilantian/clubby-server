@@ -6,11 +6,13 @@ export default (user: {
   email: string;
   id: string;
   role: string;
+  activated: boolean;
 }) => {
   const jwtPayload = {
     name: user.name,
     email: user.email,
     id: user.id,
+    activated: user.activated,
     scopes: [user.role],
   };
 

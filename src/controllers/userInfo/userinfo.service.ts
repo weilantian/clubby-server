@@ -31,6 +31,7 @@ const updateUserInfo = async (req: Request, res: Response, ctx: Context) => {
         role: user.role,
         roleName: user.roleName,
         sex: user.sex,
+        activated: user.activated,
       },
     });
   } catch (err) {
@@ -65,6 +66,7 @@ const getCurrentUserInfo = async (
         roleName: user!.roleName,
         sex: user!.sex,
         jwt: signJwt(user),
+        activated: user!.activated,
       },
     });
   } catch (err) {
@@ -88,6 +90,7 @@ const getAllUsers = async (req: Request, res: Response, ctx: Context) => {
         role: user!.role,
         roleName: user!.roleName,
         sex: user!.sex,
+        activated: user!.activated,
       });
     }
 
@@ -119,6 +122,7 @@ const getUserInfo = async (req: Request, res: Response, ctx: Context) => {
         role: user!.role,
         roleName: user!.roleName,
         sex: user!.sex,
+        activated: user!.activated,
       },
     });
   } catch (e) {

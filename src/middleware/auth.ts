@@ -2,7 +2,10 @@ import jwt from "jsonwebtoken";
 import config from "../config";
 import { Application, Response, Request } from "express";
 
-export default (credentials: Array<string> = []) => {
+export default (
+  credentials: Array<string> = [],
+  ignoreActivation?: boolean | false
+) => {
   return (req: Request, res: Response, next: () => void) => {
     const token = req.headers["authorization"];
     if (!token) {
@@ -24,6 +27,13 @@ export default (credentials: Array<string> = []) => {
         });
       }
       req.userData = decoded!;
+      if (!req.userData.activated && !ignoreActivation) {
+        return res.status(401).send({
+          message: "The account has not been activated.",
+          code: "ACCOUNT_NOT_ACTIVATED",
+          data: { name: req.userData.name },
+        });
+      }
       if (credentials.length > 0) {
         if (
           decoded! &&

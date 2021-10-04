@@ -1,4 +1,4 @@
-import { Role, Sex } from "@prisma/client";
+import { Prisma, Role, Sex } from "@prisma/client";
 import { Context } from "../../context";
 import { Application, Response, Request } from "express";
 import jwt from "jsonwebtoken";
@@ -84,6 +84,7 @@ const login = async (req: Request, res: Response, ctx: Context) => {
         roleName: user.roleName,
         sex: user.sex,
         jwt: signJwt(user),
+        activated: user.activated,
       },
     });
   } catch (err) {
@@ -133,4 +134,44 @@ const updatePIN = async (req: Request, res: Response, ctx: Context) => {
   }
 };
 
-export { signUp, login, updatePIN };
+const activateAccount = async (req: Request, res: Response, ctx: Context) => {
+  const { newPassword } = req.body;
+  try {
+    const user = await ctx.prisma.user.update({
+      where: {
+        id: req.userData.id,
+      },
+      data: {
+        password: newPassword,
+        activated: true,
+      },
+    });
+    return res.status(200).send({
+      message: "OK",
+      code: "OK",
+      data: {
+        id: user!.id,
+        name: user!.name,
+        email: user!.email,
+        role: user!.role,
+        roleName: user!.roleName,
+        sex: user!.sex,
+        jwt: signJwt(user),
+        activated: user!.activated,
+      },
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2025") {
+        return res.status(404).send({
+          message: "Can not found the schedule",
+          code: "NOT_FOUND",
+          data: {},
+        });
+      }
+    }
+    reportError(e, res);
+  }
+};
+
+export { signUp, login, updatePIN, activateAccount };

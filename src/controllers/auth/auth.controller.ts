@@ -1,4 +1,4 @@
-import { signUp, login, updatePIN } from "./auth.service";
+import { signUp, login, updatePIN, activateAccount } from "./auth.service";
 import { Application, Response, Request } from "express";
 import { createContext } from "../../context";
 import { Router } from "express";
@@ -96,6 +96,26 @@ AuthController.post(
     }
 
     return updatePIN(req, res, ctx);
+  }
+);
+
+AuthController.post(
+  "/activate",
+  checkSchema({
+    newPassword: {
+      in: ["body"],
+      isLength: {
+        options: { min: 12, max: 32 },
+      },
+    },
+  }),
+  auth([], true),
+  (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return reportUnexpectedRequest(req, res);
+    }
+    return activateAccount(req, res, ctx);
   }
 );
 
