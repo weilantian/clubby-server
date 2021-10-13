@@ -1,4 +1,4 @@
-import express, { Application, Router } from "express";
+import express, { Application } from "express";
 import cors from "cors";
 import { routes } from "./routes";
 
@@ -14,11 +14,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 routes(app);
-
-app.get("*", function (req, res) {
-  console.log(req.originalUrl);
-  res.status(200).send("ok");
-});
 
 try {
   app.listen(port, (): void => {
