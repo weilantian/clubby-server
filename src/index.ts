@@ -15,6 +15,11 @@ app.use(express.urlencoded({ extended: true }));
 
 routes(app);
 
+app.get("*", function (req, res) {
+  console.log(req.originalUrl);
+  res.status(200).send("ok");
+});
+
 try {
   app.listen(port, (): void => {
     console.log(`listening on port ${port}`);

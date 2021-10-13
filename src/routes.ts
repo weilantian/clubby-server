@@ -7,12 +7,12 @@ import CourseController from "./controllers/course/course.controller";
 import ScheduleController from "./controllers/schedule/schedule.controller";
 
 const _routes: [string, Router][] = [
-  ["/auth", AuthController],
-  ["/user", UserInfoController],
-  ["/info", ClubInfoController],
-  ["/inquiry", InquiryController],
-  ["/course", CourseController],
-  ["/schedule", ScheduleController],
+  ["/api/auth", AuthController],
+  ["/api/user", UserInfoController],
+  ["/api/info", ClubInfoController],
+  ["/api/inquiry", InquiryController],
+  ["/api/course", CourseController],
+  ["/api/schedule", ScheduleController],
 ];
 
 export const routes = (app: Application) => {
