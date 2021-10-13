@@ -119,4 +119,6 @@ AuthController.post(
   }
 );
 
+//TODO: 批量注册功能
+
 export default AuthController;

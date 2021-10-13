@@ -1,6 +1,6 @@
 import { createContext } from "../../context";
 import { Request, Response, Router } from "express";
-import { checkSchema, validationResult } from "express-validator";
+import { checkSchema, Schema, validationResult } from "express-validator";
 import auth from "../../middleware/auth";
 import reportUnexpectedRequest from "../../utils/reportUnexpectedRequest";
 import {
@@ -13,20 +13,30 @@ import {
 
 const ctx = createContext();
 const CourseController: Router = Router();
+
+const sharedSchema: Schema = {
+  name: {
+    notEmpty: true,
+    isString: true,
+  },
+  content: {
+    isString: true,
+  },
+  fileLinks: {
+    isString: true,
+    optional: { options: { nullable: true } },
+  },
+  published: {
+    isBoolean: true,
+    toBoolean: true,
+    optional: { options: { nullable: true } },
+  },
+};
+
 CourseController.post(
   "/",
   checkSchema({
-    name: {
-      notEmpty: true,
-      isString: true,
-    },
-    content: {
-      isString: true,
-    },
-    fileLinks: {
-      isString: true,
-      optional: { options: { nullable: true } },
-    },
+    ...sharedSchema,
   }),
   auth(["ADMIN"]),
   (req: Request, res: Response) => {
@@ -39,6 +49,7 @@ CourseController.post(
 CourseController.patch(
   "/:id",
   checkSchema({
+    ...sharedSchema,
     id: {
       isUUID: true,
       in: ["params"],

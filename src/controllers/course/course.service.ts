@@ -9,12 +9,13 @@ export const createCourse = async (
   ctx: Context
 ) => {
   try {
-    const { name, content, fileLinks } = req.body;
+    const { name, content, fileLinks, published } = req.body;
     const course = await ctx.prisma.course.create({
       data: {
         name,
         content,
         fileLinks,
+        published,
       },
     });
     return res.status(200).send({
@@ -102,7 +103,7 @@ export const getCourses = async (req: Request, res: Response, ctx: Context) => {
     return res.status(200).send({
       message: "OK",
       code: "OK",
-      data: { ...courses },
+      data: [...courses],
     });
   } catch (e) {
     reportError(e, res);
