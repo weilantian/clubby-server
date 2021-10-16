@@ -5,6 +5,7 @@ import ClubInfoController from "./controllers/club/club.controller";
 import InquiryController from "./controllers/inquiry/inquiry.controller";
 import CourseController from "./controllers/course/course.controller";
 import ScheduleController from "./controllers/schedule/schedule.controller";
+import AttendanceController from "./controllers/attendance/attendance.controller";
 
 const _routes: [string, Router][] = [
   ["/api/auth", AuthController],
@@ -13,6 +14,7 @@ const _routes: [string, Router][] = [
   ["/api/inquiry", InquiryController],
   ["/api/course", CourseController],
   ["/api/schedule", ScheduleController],
+  ["/api/attendance", AttendanceController],
 ];
 
 export const routes = (app: Application) => {

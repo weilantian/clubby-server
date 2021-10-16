@@ -21,7 +21,7 @@ ClubInfoController.get(
       isUUID: true,
     },
   }),
-  auth(["ADMIN"]),
+  auth([]),
   (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return reportUnexpectedRequest(req, res);

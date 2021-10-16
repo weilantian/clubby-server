@@ -15,10 +15,8 @@ const updateUserInfo = async (req: Request, res: Response, ctx: Context) => {
       data: {
         name,
         email,
-        role,
         password,
         sex,
-        roleName,
       },
     });
 
@@ -28,8 +26,6 @@ const updateUserInfo = async (req: Request, res: Response, ctx: Context) => {
       data: {
         name: user.name,
         email: user.email,
-        role: user.role,
-        roleName: user.roleName,
         sex: user.sex,
         activated: user.activated,
       },
@@ -80,6 +76,11 @@ const getAllUsers = async (req: Request, res: Response, ctx: Context) => {
     const userList = [];
     const users = await ctx.prisma.user.findMany({
       where: { role: role as Role },
+      include: {
+        _count: {
+          select: { atended: true },
+        },
+      },
     });
 
     for (const user of users) {
@@ -91,6 +92,7 @@ const getAllUsers = async (req: Request, res: Response, ctx: Context) => {
         roleName: user!.roleName,
         sex: user!.sex,
         activated: user!.activated,
+        attendedCount: user!._count!.atended,
       });
     }
 
@@ -135,6 +137,7 @@ const getUserInfo = async (req: Request, res: Response, ctx: Context) => {
         });
       }
     }
+    reportError(e, res);
   }
 };
 

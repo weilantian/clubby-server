@@ -37,10 +37,6 @@ const sharedSchema: Schema = {
     optional: { options: { nullable: true } },
     isString: true,
   },
-  role: {
-    optional: { options: { nullable: true } },
-    isString: true,
-  },
 };
 UserInfoController.patch(
   "/current",
