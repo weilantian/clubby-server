@@ -10,6 +10,7 @@ import {
   deletePersonToAttendanceRecord,
   getAllAttendanceRecords,
   getAttendanceRecord,
+  getRecordsByUserId,
 } from "./attendance.service";
 
 const ctx = createContext();
@@ -67,6 +68,19 @@ AttendanceController.get(
   auth(["ADMIN"]),
   (req: Request, res: Response) => {
     return getAllAttendanceRecords(req, res, ctx);
+  }
+);
+
+AttendanceController.get(
+  "/byUser",
+  checkSchema({
+    user: { in: ["query"], isUUID: true },
+  }),
+  auth(["ADMIN"]),
+  (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return reportUnexpectedRequest(req, res);
+    return getRecordsByUserId(req, res, ctx);
   }
 );
 

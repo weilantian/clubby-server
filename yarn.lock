@@ -314,6 +314,11 @@
   dependencies:
     "@cspotcode/source-map-consumer" "0.8.0"
 
+"@getvim/execute@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@getvim/execute/-/execute-1.0.0.tgz#c6265e94caff8f1c52dee565a5b8a90166910612"
+  integrity sha512-DBtKHtKq4GKNnHL8pmiZb2y7uhkfVaQljqlmOJODDtJJfVOPQtUMMJCbEBTbvrqTnOlzgcgftUIsJCbLNgukdg==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz"

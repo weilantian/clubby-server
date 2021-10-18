@@ -8,20 +8,6 @@ import signJwt from "../../utils/signJwt";
 
 const signUp = async (req: Request, res: Response, ctx: Context) => {
   const body = req.body;
-
-  const existedUser = await ctx.prisma.user.findFirst({
-    where: {
-      email: body.email,
-    },
-  });
-
-  if (existedUser) {
-    return res.status(401).send({
-      message: "Email existed",
-      code: "EMAIL_EXISTED",
-      data: {},
-    });
-  }
   try {
     const user = await ctx.prisma.user.create({
       data: {
@@ -48,8 +34,17 @@ const signUp = async (req: Request, res: Response, ctx: Context) => {
         jwt: signJwt(user),
       },
     });
-  } catch (err) {
-    reportError(err, res);
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return res.status(401).send({
+          code: "EMAIL_EXISTED",
+          message: "Email has been used by other accounts.",
+          data: {},
+        });
+      }
+    }
+    reportError(e, res);
   }
 };
 

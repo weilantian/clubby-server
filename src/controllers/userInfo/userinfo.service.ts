@@ -31,6 +31,15 @@ const updateUserInfo = async (req: Request, res: Response, ctx: Context) => {
       },
     });
   } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code == "P2002") {
+        return res.status(401).send({
+          message: "This email has been used by other accounts.",
+          code: "EMAIL_EXISTED",
+          data: {},
+        });
+      }
+    }
     reportError(err, res);
   }
 };
@@ -172,9 +181,15 @@ const updateOtherUserInfo = async (
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2025") {
-        return res.status(404).send({
+        return res.status(401).send({
           message: "Can not found the user",
           code: "NOT_FOUND",
+          data: {},
+        });
+      } else if (e.code === "P2002") {
+        return res.status(401).send({
+          message: "This email has been used by other accounts.",
+          code: "EMAIL_EXISTED",
           data: {},
         });
       }

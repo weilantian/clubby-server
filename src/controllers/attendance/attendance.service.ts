@@ -289,3 +289,53 @@ export const checkAttendance = async (
     reportError(e, res);
   }
 };
+
+export const getRecordsByUserId = async (
+  req: Request,
+  res: Response,
+  ctx: Context
+) => {
+  const { user } = req.query;
+  try {
+    const userInfo = await ctx.prisma.user.findUnique({
+      where: {
+        id: user as string,
+      },
+      select: {
+        name: true,
+        id: true,
+        role: true,
+        roleName: true,
+      },
+    });
+    const records = await ctx.prisma.attendanceRecord.findMany({
+      where: {
+        attended: {
+          some: {
+            id: user as string,
+          },
+        },
+      },
+    });
+    return res.status(200).send({
+      message: "OK",
+      code: "OK",
+      data: {
+        userInfo: { ...userInfo },
+        count: records.length,
+        records: [...records],
+      },
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2025") {
+        return res.status(404).send({
+          message: "Can not found the members",
+          code: "NOT_FOUND",
+          data: {},
+        });
+      }
+    }
+    reportError(e, res);
+  }
+};

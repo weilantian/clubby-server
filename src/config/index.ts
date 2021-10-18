@@ -1,3 +1,3 @@
 export default {
-    JWT_KEY: "Clubby Clubby Lemon Squizzy"
-}
+  JWT_KEY: "Clubby Clubby Lemon Squizzy",
+};
