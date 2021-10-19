@@ -27,6 +27,7 @@ AuthController.post(
       isLength: {
         options: { min: 12, max: 32 },
       },
+      optional: { options: { nullable: true } },
     },
     sex: {
       notEmpty: true,

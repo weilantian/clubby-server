@@ -339,3 +339,7 @@ export const getRecordsByUserId = async (
     reportError(e, res);
   }
 };
+
+const deleteAttendanceRecord = (req: Request, res: Response, ctx: Context) => {
+  const id = req.params.id;
+};

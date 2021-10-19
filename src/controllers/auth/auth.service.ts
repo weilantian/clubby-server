@@ -160,7 +160,7 @@ const activateAccount = async (req: Request, res: Response, ctx: Context) => {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2025") {
         return res.status(404).send({
-          message: "Can not found the schedule",
+          message: "Can not found this account",
           code: "NOT_FOUND",
           data: {},
         });
@@ -168,6 +168,25 @@ const activateAccount = async (req: Request, res: Response, ctx: Context) => {
     }
     reportError(e, res);
   }
+};
+
+const deleteAccount = async (req: Request, res: Response, ctx: Context) => {
+  const id = req.params.id;
+  if (id === req.userData.id) {
+    return res.status(401).send({
+      code: "UNEXPECTED_REQUEST",
+      message: "You can not delete your own account",
+      data: {},
+    });
+  }
+  const deletedAccount = await ctx.prisma.user.delete({
+    where: { id },
+  });
+  return res.status(200).send({
+    code: "OK",
+    message: "OK",
+    data: { ...deletedAccount },
+  });
 };
 
 export { signUp, login, updatePIN, activateAccount };
