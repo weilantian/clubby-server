@@ -4,6 +4,7 @@ import { Context } from "../../context";
 import { Application, Response, Request } from "express";
 import reportError from "../../utils/reportError";
 import signJwt from "../../utils/signJwt";
+import bcrypt from "bcrypt";
 const updateUserInfo = async (req: Request, res: Response, ctx: Context) => {
   const { name, email, role, password, sex, roleName } = req.body;
   const userId = req.userData.id;
@@ -15,7 +16,7 @@ const updateUserInfo = async (req: Request, res: Response, ctx: Context) => {
       data: {
         name,
         email,
-        password,
+        password: password ? await bcrypt.hash(password, 10) : undefined,
         sex,
       },
     });

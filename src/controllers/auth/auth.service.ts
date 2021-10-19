@@ -5,16 +5,17 @@ import jwt from "jsonwebtoken";
 import config from "../../config";
 import reportError from "../../utils/reportError";
 import signJwt from "../../utils/signJwt";
-
+import bcrypt from "bcrypt";
 const signUp = async (req: Request, res: Response, ctx: Context) => {
   const body = req.body;
   try {
+    const hashedPassword = await bcrypt.hash(body.password, 10);
     const user = await ctx.prisma.user.create({
       data: {
         name: body.name,
         email: body.email,
         role: body.role as Role,
-        password: body.password,
+        password: hashedPassword,
         sex: body.sex as Sex,
         roleName: body.roleName,
       },
@@ -62,7 +63,7 @@ const login = async (req: Request, res: Response, ctx: Context) => {
         .status(401)
         .send({ message: "Can not login", code: "AUTH_FAILED", data: {} });
     }
-    if (user.password != password) {
+    if (!user.password || !(await bcrypt.compare(password, user.password))) {
       return res
         .status(401)
         .send({ message: "Can not login", code: "AUTH_FAILED", data: {} });

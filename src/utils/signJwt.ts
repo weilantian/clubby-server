@@ -16,5 +16,7 @@ export default (user: {
     scopes: [user.role],
   };
 
-  return jwt.sign(jwtPayload, config.JWT_KEY);
+  return jwt.sign(jwtPayload, config.JWT_KEY, {
+    expiresIn: "10h",
+  });
 };
